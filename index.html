@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PrismFlow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    
+    :root {
+      --bg-deep: #020108;
+      --neon-violet: #8b5cf6;
+      --neon-pink: #ec4899;
+      --glass-border: rgba(255, 255, 255, 0.12);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: var(--bg-deep);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      color: white;
+      height: 100vh;
+      width: 100vw;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Cinematic Retro-Neon Background System */
+    .game-background {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, #0a041a 0%, #020108 45%, #020108 55%, #150312 100%);
+      z-index: -2;
+    }
+
+    .grid-top {
+      position: fixed;
+      top: -15%;
+      left: -25%;
+      width: 150%;
+      height: 60%;
+      background-image: 
+        linear-gradient(rgba(139, 92, 246, 0.4) 1.5px, transparent 1.5px),
+        linear-gradient(90deg, rgba(139, 92, 246, 0.4) 1.5px, transparent 1.5px);
+      background-size: 55px 55px;
+      z-index: -1;
+      opacity: 0.25;
+      mask-image: linear-gradient(to bottom, black 10%, transparent 85%);
+      transform: perspective(400px) rotateX(55deg);
+      animation: grid-scroll-top 25s linear infinite;
+      pointer-events: none;
+      filter: drop-shadow(0 0 5px var(--neon-violet));
+    }
+
+    .grid-bottom {
+      position: fixed;
+      bottom: -15%;
+      left: -25%;
+      width: 150%;
+      height: 60%;
+      background-image: 
+        linear-gradient(rgba(236, 72, 153, 0.4) 1.5px, transparent 1.5px),
+        linear-gradient(90deg, rgba(236, 72, 153, 0.4) 1.5px, transparent 1.5px);
+      background-size: 55px 55px;
+      z-index: -1;
+      opacity: 0.35;
+      mask-image: linear-gradient(to top, black 10%, transparent 85%);
+      transform: perspective(400px) rotateX(-55deg);
+      animation: grid-scroll-bottom 25s linear infinite;
+      pointer-events: none;
+      filter: drop-shadow(0 0 5px var(--neon-pink));
+    }
+
+    @keyframes grid-scroll-top {
+      from { background-position: 0 0; }
+      to { background-position: 0 55px; }
+    }
+
+    @keyframes grid-scroll-bottom {
+      from { background-position: 0 0; }
+      to { background-position: 0 -55px; }
+    }
+
+    .glow-violet-flare {
+      position: absolute;
+      top: -5%;
+      left: -5%;
+      width: 70vw;
+      height: 70vw;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, rgba(139, 92, 246, 0.05) 50%, transparent 75%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: -1;
+      animation: pulse-violet 8s infinite alternate ease-in-out;
+    }
+
+    .glow-pink-flare {
+      position: absolute;
+      bottom: -10%;
+      right: -5%;
+      width: 80vw;
+      height: 80vw;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.35) 0%, rgba(236, 72, 153, 0.05) 50%, transparent 75%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: -1;
+      animation: pulse-pink 10s infinite alternate ease-in-out;
+    }
+
+    .ambient-haze {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    @keyframes pulse-violet {
+      0% { opacity: 0.7; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    @keyframes pulse-pink {
+      0% { opacity: 0.6; transform: scale(1); }
+      100% { opacity: 0.9; transform: scale(1.15); }
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 20%, rgba(2, 1, 8, 0.9) 100%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Glassmorphism UI Components */
+    .glass-panel {
+      background: rgba(10, 5, 20, 0.45);
+      backdrop-filter: blur(25px) saturate(180%);
+      -webkit-backdrop-filter: blur(25px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 
+        0 24px 60px -12px rgba(0, 0, 0, 0.8),
+        inset 0 0 20px rgba(139, 92, 246, 0.05);
+    }
+
+    .glass-tube {
+      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.1) 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 
+        inset 0 0 15px rgba(255,255,255,0.03),
+        0 10px 30px rgba(0,0,0,0.5);
+      border-radius: 14px 14px 44px 44px;
+      transition: transform 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+      transform-origin: bottom center;
+      will-change: transform;
+      contain: layout paint;
+    }
+
+    .liquid-layer {
+      position: relative;
+      transition: height 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+      overflow: visible;
+      background-clip: padding-box;
+      will-change: height;
+      contain: layout paint;
+    }
+
+    .liquid-surface {
+      position: absolute;
+      top: -3px;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      filter: blur(1.5px);
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.6);
+      z-index: 5;
+      animation: surface-wave 3s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    /* Liquid Transfer Animations */
+    @keyframes stream-draw-main {
+      0% { stroke-dashoffset: 600; }
+      15% { stroke-dashoffset: 0; }
+      85% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: -600; opacity: 0; }
+    }
+
+    @keyframes stream-draw-highlight {
+      0% { stroke-dashoffset: 600; }
+      20% { stroke-dashoffset: 0; }
+      80% { stroke-dashoffset: 0; opacity: 0.4; }
+      100% { stroke-dashoffset: -600; opacity: 0; }
+    }
+
+    .liquid-splash {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      animation: splash-pop 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes splash-pop {
+      0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -20px) scale(0); opacity: 0; }
+    }
+
+    .liquid-ripple {
+      position: absolute;
+      top: 0;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      z-index: 10;
+      transform: translateX(-50%) scale(0);
+      animation: ripple-out 0.75s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-out {
+      0% { transform: translateX(-50%) scale(0); opacity: 0.8; }
+      100% { transform: translateX(-50%) scale(1.5); opacity: 0; }
+    }
+
+    @keyframes surface-wave {
+      0%, 100% { transform: scaleX(1) translateY(0); opacity: 0.7; }
+      50% { transform: scaleX(1.1) translateY(-1px); opacity: 1; }
+    }
+
+    .btn-touch {
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      will-change: transform;
+    }
+    .btn-touch:active {
+      transform: scale(0.92);
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .glow-active {
+      animation: glow-pulse 2.5s infinite ease-in-out;
+    }
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 8px rgba(139, 92, 246, 0.4); }
+      50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.7); }
+    }
+
+    .liquid-toggle {
+      width: 56px;
+      height: 30px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 100px;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.1);
+      overflow: hidden;
+    }
+    .liquid-toggle .toggle-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+      transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      opacity: 0.7;
+    }
+    .liquid-toggle.active .toggle-fill { width: 100%; }
+    .liquid-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      background: #ffffff;
+      border-radius: 50%;
+      transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .liquid-toggle.active::after { transform: translateX(26px); }
+
+    .scan-line {
+      position: fixed;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.15), transparent);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+      animation: scan 15s infinite linear;
+      z-index: 100;
+      pointer-events: none;
+    }
+    @keyframes scan {
+      0% { top: -10%; }
+      100% { top: 110%; }
+    }
+
+    .play-button-gradient {
+      background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+      box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.6);
+    }
+
+    .animate-in {
+      animation-duration: 0.6s;
+      animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+      will-change: transform, opacity;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+</head>
+<body>
+  <div class="game-background"></div>
+  <div class="grid-top"></div>
+  <div class="grid-bottom"></div>
+  <div class="glow-violet-flare"></div>
+  <div class="glow-pink-flare"></div>
+  <div class="ambient-haze"></div>
+  <div class="vignette"></div>
+  <div class="scan-line"></div>
+  
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
